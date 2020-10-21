@@ -1,0 +1,9 @@
+C:\Users\DELL\Desktop\idea-StokTakip\StokTakip\DatabaseLibrary\bin\Release\netstandard2.0\DatabaseLibrary.deps.json
+C:\Users\DELL\Desktop\idea-StokTakip\StokTakip\DatabaseLibrary\bin\Release\netstandard2.0\DatabaseLibrary.dll
+C:\Users\DELL\Desktop\idea-StokTakip\StokTakip\DatabaseLibrary\bin\Release\netstandard2.0\DatabaseLibrary.pdb
+C:\Users\DELL\Desktop\idea-StokTakip\StokTakip\DatabaseLibrary\obj\Release\netstandard2.0\DatabaseLibrary.csprojAssemblyReference.cache
+C:\Users\DELL\Desktop\idea-StokTakip\StokTakip\DatabaseLibrary\obj\Release\netstandard2.0\DatabaseLibrary.AssemblyInfoInputs.cache
+C:\Users\DELL\Desktop\idea-StokTakip\StokTakip\DatabaseLibrary\obj\Release\netstandard2.0\DatabaseLibrary.AssemblyInfo.cs
+C:\Users\DELL\Desktop\idea-StokTakip\StokTakip\DatabaseLibrary\obj\Release\netstandard2.0\DatabaseLibrary.csproj.CoreCompileInputs.cache
+C:\Users\DELL\Desktop\idea-StokTakip\StokTakip\DatabaseLibrary\obj\Release\netstandard2.0\DatabaseLibrary.dll
+C:\Users\DELL\Desktop\idea-StokTakip\StokTakip\DatabaseLibrary\obj\Release\netstandard2.0\DatabaseLibrary.pdb

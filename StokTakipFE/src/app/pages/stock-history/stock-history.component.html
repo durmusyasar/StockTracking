@@ -1,0 +1,183 @@
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-auto">
+            <div class="card text-center shadow rounded bg-white p-3 stock-card">
+                <div class="card-title">
+                    <h2 class="font-weight-bold text-success">Stok Geçmişi</h2>
+                </div>
+                <hr class="p-0" />
+                <div class="row justify-content-between align-items-end">
+                    <div class="col-4">
+                        <mat-form-field appearance="legacy" style="width: 20rem;">
+                            <input type="text" placeholder="Fatura Numarası Ara.." matInput [formControl]="searchStocks"
+                                [matAutocomplete]="stockAuto" />
+                            <mat-autocomplete #stockAuto="matAutocomplete" [displayWith]="selectProperty('invoiceNo')">
+                                <mat-option *ngFor="let item of searchStockList | async" [value]="item">
+                                    {{ item.invoiceNo }}
+                                </mat-option>
+                                <mat-option *ngIf="(searchStockList | async).length === 0">
+                                    Önce Stok Hareketi <strong> Eklenmeli !</strong>
+                                </mat-option>
+                            </mat-autocomplete>
+                            <button mat-button tabindex="-1" mat-icon-button matSuffix *ngIf="searchStocks.value"
+                                (click)="searchStocks.setValue(null)">
+                                <i class="zmdi zmdi-close"></i>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 d-print-none table-responsive">
+                        <table class="table table-hover dt-responsive nowrap">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="text-success">Fatura No.</th>
+                                    <th class="text-success">Proje Adı</th>
+                                    <th class="text-success">Gelen Firma</th>
+                                    <th class="text-success">Giden Firma</th>
+                                    <th class="text-success">Onaylayan</th>
+                                    <th class="text-success">Stok Giriş Tarihi</th>
+                                    <th class="text-success">Durumu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of filterStockList | async">
+                                    <td class="align-middle"><a class="text-success"
+                                            (click)="openStockModal(stock, item)">{{item.invoiceNo}}</a></td>
+                                    <td class="align-middle">{{item.projectName}}</td>
+                                    <td class="align-middle">{{item.incomingCompanyName}}</td>
+                                    <td class="align-middle">{{item.outgoingCompanyName}}</td>
+                                    <td class="align-middle">{{item.confirmById}}</td>
+                                    <td class="align-middle">{{item.date | date: 'dd / MM / yyyy'}}</td>
+                                    <td *ngIf="item.confirmStatus === true" class="align-middle">
+                                        <h3 class="m-0"><span class="badge badge-success">Onaylandı</span></h3>
+                                    </td>
+                                    <td *ngIf="item.confirmStatus === false" class="align-middle">
+                                        <h3 class="m-0"><span class="badge badge-secondary">Reddedildi</span></h3>
+                                    </td>
+                                    <td *ngIf="item.confirmStatus === null" class="align-middle">
+                                        <h3 class="m-0"><span class="badge badge-danger">Beklemede</span></h3>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-12" *ngIf="(filterStockList | async).length === 0">
+                        <table class="table">
+                            <thead class="thead-light">
+                                <tr>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <span class="text-monospace font-weight-bolder">Listelenecek Stok Bilgisi
+                                        Bulunmamaktadır!</span>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-12" *ngIf="responsePagination | async; let pagination"
+                        [formGroup]="paginationFormGroup">
+                        <div class="row justify-content-between align-items-center mb-2" *ngIf="!searchStocks.value">
+                            <div class="col-1">
+                                <span class="text-nowrap dataTables_info text-black-50"
+                                    *ngIf="responsePagination | async; let pagination">
+                                    <span *ngIf="pagination.pageCount > 1">
+                                        {{pagination?.rowCount}} kayıttan
+                                        {{(pagination?.page-1)*pagination?.rowsPerPage + 1}} -
+                                        {{Math.min(pagination?.page*pagination?.rowsPerPage, pagination?.rowCount)}}
+                                        arasındaki kayıtlar gösteriliyor.
+                                    </span>
+                                </span>
+                            </div>
+                            <!-- Pagination -->
+                            <div class="col-10 col-lg-8 align-items-center text-right" *ngIf="pagination.pageCount > 1">
+                                <div class="inline-block">
+                                    <ul class="pagination pagination-rounded mb-0 d-inline-block"
+                                        *ngIf="responsePagination | async; let pagination">
+                                        <ngb-pagination [collectionSize]="pagination.rowCount"
+                                            [pageSize]="pagination.rowsPerPage" (pageChange)="onPageChange($event)"
+                                            [(page)]="page"[maxSize]="3"
+                                            [boundaryLinks]="true">
+                                        </ngb-pagination>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #stock let-c="close" let-d="dismiss">
+    <div class="modal-header badge-pill badge-success">
+        <h4 class="modal-title mb-0 font-weight-bold ml-3" id="modal-basic-title">{{modalHeader}}</h4>
+        <button type="button" class="close mr-0" aria-label="Close" (click)="d('Cross click')" tabindex="-1">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-4">
+                <h3 class="font-weight-bold">Fatura Numarası :</h3>
+            </div>
+            <div class="col-8">
+                <h3>{{invoiceNo}}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <h3 class="font-weight-bold">Teslim Alan :</h3>
+            </div>
+            <div class="col-8">
+                <h3>{{receiverId.displayName}}<a *ngIf="receiverId.email" class="text-success"
+                        href="mailto:{{receiverId.email}}"> - {{receiverId.email}}</a></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <h3 class="font-weight-bold">Teslim Eden :</h3>
+            </div>
+            <div class="col-8">
+                <h3>{{deliveryPersonId.displayName}}<a *ngIf="deliveryPersonId.email" class="text-success"
+                        href="mailto:{{deliveryPersonId.email}}"> - {{deliveryPersonId.email}}</a></h3>
+            </div>
+        </div>
+        <hr class="p-0" />
+        <div class="row">
+            <div class="col-12">
+                <textarea class="border-success" maxlength="250" rows="4"
+                    style="min-width: 29rem; max-height: 5rem;min-height: 5rem;" readonly>{{note}}</textarea>
+            </div>
+        </div>
+        <hr class="p-0" />
+        <div class="row">
+            <div class="col-12 d-print-none table-responsive">
+                <table class="table table-hover dt-responsive nowrap">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="text-success">Seri No.</th>
+                            <th class="text-success">Ürün Adı</th>
+                            <th class="text-success">Miktar</th>
+                            <th class="text-success">Birim</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of stockProductList | async">
+                            <td>{{item.serialNo}}</td>
+                            <td>{{item.productName}}</td>
+                            <td>{{item.quantity}}</td>
+                            <td>{{item.department}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer border-success">
+        <button type="button" class="btn btn-outline-dark btn-sm" aria-label="Close"
+            (click)="d('Cross click')">Kapat</button>
+    </div>
+</ng-template>

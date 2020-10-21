@@ -1,0 +1,373 @@
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-auto">
+            <div *ngIf="!!profileInformation" class="card text-center shadow rounded bg-white p-3 stock-card"
+                [formGroup]="userFormGroup">
+                <div class="card-title">
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-2">
+                            <label class="hoverable" for="fileInput">
+                                <img class="rounded-pill shadow" [src]="imageSrc" alt="" style="width: 7rem;
+                                height: 9rem;">
+                                <div *ngIf="backendService.currentUser().accountName === userEdit"
+                                    class="hover-text text-success">...</div>
+                                <div *ngIf="backendService.currentUser().accountName === userEdit" class="background">
+                                </div>
+                            </label>
+                            <input *ngIf="backendService.currentUser().accountName === userEdit" id="fileInput"
+                                type='file' formControlName="userPhoto" (change)="handleInputChange($event)">
+                        </div>
+                        <div class="col-5 text-left align-self-center">
+                            <h2 class="font-weight-bold text-success">
+                                <span *ngIf="profileInformation.displayName">{{profileInformation.displayName}}</span>
+                            </h2>
+                            <h4 class="font-weight-bold text-black-50" *ngIf="profileInformation?.department">
+                                <span *ngIf="!!profileInformation?.company">{{profileInformation?.company}}</span> -
+                                <span *ngIf="profileInformation?.department">
+                                    {{profileInformation.department}}</span> - 
+                                <span class="text-success font-weight-bold" *ngIf="userAuthority">
+                                    {{userAuthority}}</span>
+                            </h4>
+                            <h4 class="font-weight-bold text-black-50" *ngIf="profileInformation.birtOfDate">
+                                {{profileInformation.birtOfDate | date:'dd / MM / y'}}</h4>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                </div>
+                <hr class="p-0 mt-0" />
+                <div class="row">
+                    <div class="col-12">
+                        <mat-tab-group mat-align-tabs="center" dynamicHeight>
+                            <mat-tab #user label="Kişi Bilgileri">
+                                <div class="row">
+                                    <div class="col-12 text-left">
+                                        <h3 class="font-weight-bold text-success">Hakkında</h3>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span>
+                                            {{profileInformation?.about}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <hr class="p-0" />
+                                <div class="row">
+                                    <div class="col-12 text-left">
+                                        <h3 class="font-weight-bold text-success">İletişim Bilgileri</h3>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="row text-left">
+                                            <div class="col-12 mb-2" *ngIf="profileInformation?.mobile">
+                                                <i class="zmdi zmdi-smartphone-android font-weight-bolder"></i> <span
+                                                    class="font-weight-bolder"> Cep Telefon No. :</span>
+                                                <span> {{profileInformation?.mobile}}</span>
+                                            </div>
+                                            <div class="col-12 mb-2" *ngIf="profileInformation?.telephoneNumber">
+                                                <i class="zmdi zmdi-phone font-weight-bolder"></i> <span
+                                                    class="font-weight-bolder"> Sabit Telefon No. :</span>
+                                                <span> {{profileInformation?.telephoneNumber}}</span>
+                                            </div>
+                                            <div class="col-12 mb-2" *ngIf="profileInformation?.ipPhone">
+                                                <i class="zmdi zmdi-phone font-weight-bolder"></i> <span
+                                                    class="font-weight-bolder"> ipPhone No. :</span>
+                                                <span> {{profileInformation?.ipPhone}}</span>
+                                            </div>
+                                            <div class="col-12 mb-3" *ngIf="profileInformation?.email">
+                                                <i class="zmdi zmdi-email font-weight-bolder"></i> <span
+                                                    class="font-weight-bolder"> Mail Adresi :</span>
+                                                <span> {{profileInformation?.email}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 text-left">
+                                        <h3 class="font-weight-bold text-success">Sosyal Medya Hesapları</h3>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a *ngIf="profileAccountInformation?.linkedinAccount" class="text-dark"
+                                            target="_blank" title="Linkedln"
+                                            href="{{profileAccountInformation?.linkedinAccount}}">
+                                            <i class="zmdi zmdi-linkedin zmdi-hc-2x mr-2"> </i>
+                                        </a>
+                                        <a *ngIf="profileAccountInformation?.googleAccount" class="text-dark"
+                                            target="_blank" title="Google"
+                                            href="{{profileAccountInformation?.googleAccount}}">
+                                            <i class="zmdi zmdi-google zmdi-hc-2x mr-2"></i>
+                                        </a>
+                                        <a *ngIf="profileAccountInformation?.facebookAccount" class="text-dark"
+                                            target="_blank" title="Facebook"
+                                            href="{{profileAccountInformation?.facebookAccount}}">
+                                            <i class="zmdi zmdi-facebook-box zmdi-hc-2x mr-2"></i>
+                                        </a>
+                                        <a *ngIf="profileAccountInformation?.twitterAccount" class="text-dark"
+                                            target="_blank" title="Twitter"
+                                            href="{{profileAccountInformation?.twitterAccount}}">
+                                            <i class="zmdi zmdi-twitter-box zmdi-hc-2x mr-2"></i>
+                                        </a>
+                                        <a *ngIf="profileAccountInformation?.instagramAccount" class="text-dark"
+                                            target="_blank" title="İnstagram"
+                                            href="{{profileAccountInformation?.instagramAccount}}">
+                                            <i class="zmdi zmdi-instagram zmdi-hc-2x mr-2"></i>
+                                        </a>
+                                        <a *ngIf="profileAccountInformation?.bloggerAccount" class="text-dark"
+                                            target="_blank" title="blogger"
+                                            href="{{profileAccountInformation?.bloggerAccount}}">
+                                            <i class="zmdi zmdi-blogger zmdi-hc-2x"></i>
+                                        </a>
+                                        <a *ngIf="profileAccountInformation?.youtubeAccount" class="text-dark"
+                                            target="_blank" title="youtube"
+                                            href="{{profileAccountInformation?.youtubeAccount}}">
+                                            <i class="zmdi zmdi-youtube-play zmdi-hc-2x"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </mat-tab>
+                            <mat-tab *ngIf="backendService.currentUser().accountName === userEdit" #edit
+                                label="Bilgileri Güncele">
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <mat-form-field style="min-width: 58rem;">
+                                            <mat-label>Hakkımda</mat-label>
+                                            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3"
+                                                cdkAutosizeMaxRows="5" formControlName="about"></textarea>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <hr class="p-0">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <mat-form-field style="width: 14rem;">
+                                            <mat-label class="text-success">Kullanıcı Adı</mat-label>
+                                            <input matInput formControlName="displayName" type="text">
+                                            <button mat-button tabindex="-1" *ngIf="displayName.value" matSuffix
+                                                mat-icon-button aria-label="Clear" (click)="displayName.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-4">
+                                        <mat-form-field style="width: 14rem;">
+                                            <mat-label class="text-success">Kullanıcı Şifresi</mat-label>
+                                            <span class="btn-show-pass">
+                                                <i class="zmdi" [ngClass]="{
+                                                    'zmdi-eye-off': !showPasswordIcon,
+                                                    'zmdi-eye': showPasswordIcon
+                                                  }" (click)="showPassword()"></i>
+                                            </span>
+                                            <input matInput formControlName="password"
+                                                [type]="showPasswordIcon ? 'text' : 'password'">
+                                            <button mat-button tabindex="-1" *ngIf="password.value" matSuffix
+                                                mat-icon-button aria-label="Clear" (click)="password.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-4">
+                                        <mat-form-field style="width: 14rem;">
+                                            <mat-label class="text-success">Kullanıcı Şifresi (Tekrar)</mat-label>
+                                            <span class="btn-show-pass">
+                                                <i class="zmdi" [ngClass]="{
+                                                    'zmdi-eye-off': !showPasswordIcon2,
+                                                    'zmdi-eye': showPasswordIcon2
+                                                  }" (click)="showPassword2()"></i>
+                                            </span>
+                                            <input matInput formControlName="passwordTry"
+                                                [type]="showPasswordIcon2 ? 'text' : 'password'">
+                                            <button mat-button tabindex="-1" *ngIf="passwordTry.value" matSuffix
+                                                mat-icon-button aria-label="Clear" (click)="passwordTry.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="row align-items-baseline">
+                                    <div class="col-4">
+                                        <mat-form-field appearance="fill" style="width: 14rem;">
+                                            <mat-label>Doğum Tarihi</mat-label>
+                                            <input matInput [matDatepicker]="picker2" formControlName="birtOfDate"
+                                                type="text">
+                                            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker2></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-4">
+                                        <mat-form-field appearance="fill" style="width: 14rem;">
+                                            <mat-label>Cinsiyet</mat-label>
+                                            <mat-select formControlName="genus">
+                                                <mat-option [value]="0">Bay</mat-option>
+                                                <mat-option [value]="1">Bayan</mat-option>
+                                            </mat-select>
+                                            <button mat-button tabindex="-1" *ngIf="genus.value" matSuffix
+                                                mat-icon-button aria-label="Clear" (click)="genus.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-4">
+                                        <mat-form-field style="width: 14rem;bottom: 0.5rem;">
+                                            <mat-label class="text-success">Cep Telefon No.</mat-label>
+                                            <input matInput formControlName="mobile" type="tel">
+                                            <button mat-button tabindex="-1" *ngIf="mobile.value" matSuffix
+                                                mat-icon-button aria-label="Clear" (click)="mobile.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <mat-form-field style="width: 14rem;">
+                                            <mat-label class="text-success">Sabit Telefon No.</mat-label>
+                                            <input matInput formControlName="telephoneNumber" type="tel">
+                                            <button mat-button tabindex="-1" *ngIf="telephoneNumber.value" matSuffix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="telephoneNumber.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-4">
+                                        <mat-form-field style="width: 14rem;">
+                                            <mat-label class="text-success">ipPhone</mat-label>
+                                            <input matInput formControlName="ipPhone" type="text">
+                                            <button mat-button tabindex="-1" *ngIf="ipPhone.value" matSuffix
+                                                mat-icon-button aria-label="Clear" (click)="ipPhone.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-4">
+                                        <mat-form-field style="width: 14rem;">
+                                            <mat-label class="text-success">E-Posta Adresi</mat-label>
+                                            <input matInput formControlName="userPrincipalName" type="email">
+                                            <button mat-button tabindex="-1" *ngIf="userPrincipalName.value" matSuffix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="userPrincipalName.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <hr class="p-0">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <i class="zmdi zmdi-linkedin zmdi-hc-2x"></i> :
+                                        <mat-form-field style="min-width: 22rem; bottom: 0.5rem;">
+                                            <mat-label class="text-success">
+                                                Linkedin Hesap Link
+                                            </mat-label>
+                                            <input matInput formControlName="linkedinAccount" type="url">
+                                            <button mat-button tabindex="-1" *ngIf="linkedinAccount.value" matSuffix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="linkedinAccount.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-6">
+                                        <i class="zmdi zmdi-google zmdi-hc-2x"></i> :
+                                        <mat-form-field style="min-width: 22rem; bottom: 0.5rem;">
+                                            <mat-label class="text-success">
+                                                Google Hesap Link
+                                            </mat-label>
+                                            <input matInput formControlName="googleAccount" type="url">
+                                            <button mat-button tabindex="-1" *ngIf="googleAccount.value" matSuffix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="googleAccount.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <i class="zmdi zmdi-facebook-box zmdi-hc-2x"></i> :
+                                        <mat-form-field style="min-width: 22rem; bottom: 0.5rem;">
+                                            <mat-label class="text-success">
+                                                Facebook Hesap Link
+                                            </mat-label>
+                                            <input matInput formControlName="facebookAccount" type="url">
+                                            <button mat-button tabindex="-1" *ngIf="facebookAccount.value" matSuffix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="facebookAccount.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-6">
+                                        <i class="zmdi zmdi-twitter-box zmdi-hc-2x"></i> :
+                                        <mat-form-field style="min-width: 22rem; bottom: 0.5rem;">
+                                            <mat-label class="text-success">
+                                                Twitter Hesap Link
+                                            </mat-label>
+                                            <input matInput formControlName="twitterAccount" type="url">
+                                            <button mat-button tabindex="-1" *ngIf="twitterAccount.value" matSuffix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="twitterAccount.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <i class="zmdi zmdi-instagram zmdi-hc-2x"></i> :
+                                        <mat-form-field style="min-width: 22rem; bottom: 0.5rem;">
+                                            <mat-label class="text-success">
+                                                İnstagram Hesap Link
+                                            </mat-label>
+                                            <input matInput formControlName="instagramAccount" type="url">
+                                            <button mat-button tabindex="-1" *ngIf="instagramAccount.value" matSuffix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="instagramAccount.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-6">
+                                        <i class="zmdi zmdi-blogger zmdi-hc-2x"></i> :
+                                        <mat-form-field style="min-width: 22rem; bottom: 0.5rem;">
+                                            <mat-label class="text-success">
+                                                Blog Site Link
+                                            </mat-label>
+                                            <input matInput formControlName="bloggerAccount" type="url">
+                                            <button mat-button tabindex="-1" *ngIf="bloggerAccount.value" matSuffix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="bloggerAccount.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <i class="zmdi zmdi-youtube-play zmdi-hc-2x"></i> :
+                                        <mat-form-field style="min-width: 22rem; bottom: 0.5rem;">
+                                            <mat-label class="text-success">
+                                                Youtube Hesap Link
+                                            </mat-label>
+                                            <input matInput formControlName="youtubeAccount" type="url">
+                                            <button mat-button tabindex="-1" *ngIf="youtubeAccount.value" matSuffix
+                                                mat-icon-button aria-label="Clear"
+                                                (click)="youtubeAccount.setValue(null)">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <hr class="p-0" />
+                                <div class="row">
+                                    <div class="col-12 text-right">
+                                        <button class="btn btn-success btn-sm" (click)="saveProfile()"
+                                            [disabled]="saveUserEnabled">Kaydet</button>
+                                    </div>
+                                </div>
+                            </mat-tab>
+                        </mat-tab-group>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

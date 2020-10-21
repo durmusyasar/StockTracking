@@ -1,0 +1,588 @@
+<!-- Start Content-->
+<div class="container-fluid" *ngIf="!backendService.currentUser()?.isSupervisor">
+    <div class="account-pages mt-5 mb-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="card text-center shadow rounded bg-white p-3 stock-card no-access">
+                    <div class="bg-pattern">
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <a routerLink="/">
+                                    <span><img src="https://www.changesofaiken.com/wp-content/uploads/2020/04/changes-light-gray-slogan-no-background@2x.png.webp" height="55"></span>
+                                </a>
+                            </div>
+                            <div class="text-center mt-4">
+                                <h1 class="text-error">403</h1>
+                                <h3 class="mt-3 mb-2">Erişim Yasaklandı</h3>
+                                <p class="text-muted mb-3 ml-3">
+                                    Bu sayfaya erişim yetkiniz bulunmamaktadır! Lütfen, sistem yöneticinize başvurun.
+                                </p>
+                                <a routerLink="/" class="btn btn-success waves-effect waves-light">Ana Sayfaya Geri
+                                    Dön</a>
+                            </div>
+                        </div> <!-- end card-body -->
+                    </div>
+                    <!-- end card -->
+                </div> <!-- end col -->
+            </div>
+            <!-- end row -->
+        </div>
+        <!-- end container -->
+    </div>
+    <!-- end page -->
+</div> <!-- container -->
+
+<div class="container-fluid" *ngIf="backendService.currentUser()?.isSupervisor">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-auto">
+            <div class="card text-center shadow rounded bg-white p-3 stock-card">
+                <div class="card-title">
+                    <h2 class="font-weight-bold text-success">Proje Listesi</h2>
+                </div>
+                <hr class="p-0" />
+                <div class="row justify-content-between align-items-end">
+                    <div class="col-4">
+                        <mat-form-field appearance="legacy" style="width: 20rem;">
+                            <input type="text" placeholder="Proje ara..." matInput [formControl]="searchProjects"
+                                [matAutocomplete]="categoryLis" />
+                            <mat-autocomplete #categoryLis="matAutocomplete" [displayWith]="selectProperty('name')">
+                                <mat-option *ngFor="let item of searchProjectList | async" [value]="item">
+                                    {{ item.name }}
+                                </mat-option>
+                                <mat-option *ngIf="(searchProjectList | async).length === 0">
+                                    Önce Ürün <strong>Eklenmeli !</strong>
+                                </mat-option>
+                            </mat-autocomplete>
+                            <button mat-button tabindex="-1" mat-icon-button matSuffix *ngIf="searchProjects.value"
+                                (click)="searchProjects.setValue(null)">
+                                <i class="zmdi zmdi-close"></i>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6 text-right" style="transform: translateY(-12px);">
+                        <button class="btn btn-outline-success btn-sm"
+                            (click)="openProjectModal(projectModal, 1, null)">Proje
+                            Ekle</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 d-print-none table-responsive">
+                        <table class="table table-hover dt-responsive nowrap">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="text-success">Proje Adı</th>
+                                    <th class="text-success">Kurum</th>
+                                    <th class="text-success">Yaptıran Firma Yetkilisi</th>
+                                    <th class="text-success">Yapan Firma Yetkilisi</th>
+                                    <th class="text-success">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of filterProjectList | async">
+                                    <td class="align-middle">{{item.name}}</td>
+                                    <td class="align-middle">{{item.companyName}}</td>
+                                    <td class="align-middle">{{item.givenManagerName}}</td>
+                                    <td class="align-middle">{{item.receivedManagerName}}</td>
+                                    <td>
+                                        <button class="btn btn-outline-success rounded-circle ml-3" *ngIf="item.name">
+                                            <i class="zmdi zmdi-delete zmdi-hc-lg" (click)="deleteProject(item)"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success rounded-circle ml-3" *ngIf="item.name"
+                                            (click)="openProjectModal(projectModal, 2, item)">
+                                            <i class="zmdi zmdi-edit zmdi-hc-lg"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-12" *ngIf="(filterProjectList | async).length === 0">
+                        <table class="table">
+                            <thead class="thead-light">
+                                <tr>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <span class="text-monospace font-weight-bolder">Listelenecek Proje
+                                        Bulunmamaktadır!</span>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-12" *ngIf="responsePagination | async; let pagination"
+                        [formGroup]="paginationFormGroup">
+                        <div class="row justify-content-between align-items-center mb-2" *ngIf="!searchProjects.value">
+                            <div class="col-1">
+                                <span class="text-nowrap dataTables_info text-black-50"
+                                    *ngIf="responsePagination | async; let pagination">
+                                    <span *ngIf="pagination.pageCount > 1">
+                                        {{pagination?.rowCount}} kayıttan
+                                        {{(pagination?.page-1)*pagination?.rowsPerPage + 1}} -
+                                        {{Math.min(pagination?.page*pagination?.rowsPerPage, pagination?.rowCount)}}
+                                        arasındaki kayıtlar gösteriliyor.
+                                    </span>
+                                </span>
+                            </div>
+                            <!-- Pagination -->
+                            <div class="col-10 col-lg-8 align-items-center text-right" *ngIf="pagination.pageCount > 1">
+                                <div class="inline-block">
+                                    <ul class="pagination pagination-rounded mb-0 d-inline-block"
+                                        *ngIf="responsePagination | async; let pagination">
+                                        <ngb-pagination [collectionSize]="pagination.rowCount"
+                                            [pageSize]="pagination.rowsPerPage" (pageChange)="onPageChange($event)"
+                                            [(page)]="page"[maxSize]="3"
+                                            [boundaryLinks]="true">
+                                        </ngb-pagination>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-elastic-dots" [fullScreen]="true">
+        <p style="color: white"> Lütfen Bekleyin... </p>
+    </ngx-spinner>
+</div>
+
+<ng-template #projectModal let-c="close" let-d="dismiss">
+    <div class="modal-header badge-pill badge-success">
+        <h4 class="modal-title mb-0 font-weight-bold ml-3" id="modal-basic-title">{{modalHeader}}</h4>
+        <button type="button" class="close mr-0" aria-label="Close" (click)="d('Cross click')" tabindex="-1">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" [formGroup]="projectFormGroup"
+        (keyup.enter)="projectFormGroup.valid ? saveProject() : null">
+        <div class="row ml-4">
+            <div class="col-12">
+                <mat-form-field style="width: 24rem;">
+                    <mat-label class="text-success">Proje Adı</mat-label>
+                    <input matInput formControlName="name" type="text" autocomplete="off">
+                    <button mat-button tabindex="-1" *ngIf="name.value" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="name.setValue(null)">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-error *ngIf="name.hasError('required') || name.touched">
+                        Proje Adı <strong>Girilmelidir!</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-12">
+                <mat-form-field style="width: 23rem;">
+                    <input type="text" placeholder="Proje Sahibi Firma" matInput formControlName="companyId"
+                        [matAutocomplete]="categoryList1" />
+                    <mat-autocomplete #categoryList1="matAutocomplete" [displayWith]="selectProperty('name')">
+                        <mat-option *ngFor="let item of filterCompanyLists | async" [value]="item">
+                            {{ item.name }}
+                        </mat-option>
+                        <mat-option *ngIf="(filterCompanyLists | async).length === 0">
+                            Önce Firma Eklenmeli!
+                        </mat-option>
+                    </mat-autocomplete>
+                    <button mat-button tabindex="-1" mat-icon-button matSuffix *ngIf="companyId.value"
+                        (click)="companyId.setValue(null)">
+                        <i class="zmdi zmdi-close"></i>
+                    </button>
+                    <mat-error *ngIf="companyId.hasError('required') || companyId.touched">
+                        Firma <strong>Seçilmelidir!</strong>
+                    </mat-error>
+                </mat-form-field>
+                <button class="btn" (click)="openCompanyModal(companyModal, 1)">
+                    <i class="zmdi zmdi-plus-circle-o text-dark zmdi-hc-lg"></i>
+                </button>
+            </div>
+            <div class="col-12">
+                <mat-form-field style="width: 23rem;">
+                    <input type="text" placeholder="Projeyi Veren Yetkili Ara.." matInput formControlName="givenManager"
+                        [matAutocomplete]="categoryList2" />
+                    <mat-autocomplete #categoryList2="matAutocomplete" [displayWith]="selectProperty('displayName')">
+                        <mat-option *ngFor="let item of companyUserList | async" [value]="item">
+                            {{ item.displayName }}
+                        </mat-option>
+                        <mat-option *ngIf="companyId.value === null">
+                            Önce Proje Sahibi Firma <strong>Seçilmeli !</strong>
+                        </mat-option>
+                        <mat-option *ngIf="(companyUserList | async).length === 0 && companyId.value !== null">
+                            Önce Kullanıcı <strong>Eklenmeli !</strong>
+                        </mat-option>
+                    </mat-autocomplete>
+                    <button mat-button tabindex="-1" mat-icon-button matSuffix *ngIf="givenManager.value"
+                        (click)="givenManager.setValue(null)">
+                        <i class="zmdi zmdi-close"></i>
+                    </button>
+                    <mat-error *ngIf="givenManager.hasError('required') || givenManager.touched">
+                        Projeyi Veren Yetkili<strong>Seçilmelidir!</strong>
+                    </mat-error>
+                </mat-form-field>
+                <button *ngIf="companyId.value !== null" class="btn" (click)="openUserModal(userModal, 1)">
+                    <i class="zmdi zmdi-plus-circle-o text-dark zmdi-hc-lg"></i>
+                </button>
+            </div>
+            <div class="col-12">
+                <mat-form-field style="width: 23rem;">
+                    <input type="text" placeholder="Projeyi Alan Yetkili ara" matInput formControlName="receivedManager"
+                        [matAutocomplete]="categoryList3" />
+                    <mat-autocomplete #categoryList3="matAutocomplete" [displayWith]="selectProperty('displayName')">
+                        <mat-option *ngFor="let item of filterUsersList2 | async" [value]="item">
+                            {{ item.displayName }}
+                        </mat-option>
+                        <mat-option *ngIf="(filterUsersList2 | async).length === 0">
+                            Önce Kullanıcı <strong>Eklenmeli!</strong>
+                        </mat-option>
+                    </mat-autocomplete>
+                    <button mat-button tabindex="-1" mat-icon-button matSuffix *ngIf="receivedManager.value"
+                        (click)="receivedManager.setValue(null)">
+                        <i class="zmdi zmdi-close"></i>
+                    </button>
+                    <mat-error *ngIf="receivedManager.hasError('required') || receivedManager.touched">
+                        Projeyi Alan Yetkili <strong>Seçilmelidir!</strong>
+                    </mat-error>
+                </mat-form-field>
+                <button class="btn" (click)="openUserModal(userModal, 1)">
+                    <i class="zmdi zmdi-plus-circle-o text-dark zmdi-hc-lg"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer border-success">
+        <button type="button" class="btn btn-outline-dark btn-sm" aria-label="Close"
+            (click)="d('Cross click')">İptal</button>
+        <button type="button" class="btn btn-outline-success btn-sm" (click)="saveProject(1)"
+            [disabled]="saveProjectEnabled">Kaydet</button>
+    </div>
+</ng-template>
+
+<ng-template #companyModal let-c="close" let-d="dismiss">
+    <div class="modal-header badge-pill badge-success">
+        <h4 class="modal-title mb-0 font-weight-bold ml-3" id="modal-basic-title">{{modalHeader}}</h4>
+        <button type="button" class="close mr-0" aria-label="Close" (click)="d('Cross click')" tabindex="-1">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" [formGroup]="companiesFormGroup"
+        (keyup.enter)="companiesFormGroup.valid ? saveCompany(): null">
+        <div class="row ml-4">
+            <div class="col">
+                <mat-checkbox class="font-weight-bold" formControlName="isShipping">Kargo Firması</mat-checkbox>
+            </div>
+            <div class="col-12">
+                <mat-form-field style="width: 24rem;">
+                    <mat-label class="text-success">Firma Adı</mat-label>
+                    <input matInput formControlName="name" type="text" autocomplete="off">
+                    <button mat-button tabindex="-1" *ngIf="name.value" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="name.setValue(null)">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-error *ngIf="name.hasError('required') || name.touched">
+                        Firma Adı <strong>Girlmelidir!</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-12">
+                <mat-form-field style="width: 24rem;">
+                    <mat-label class="text-success">Vergi No.</mat-label>
+                    <input matInput formControlName="taxNo" type="text" max="10" min="10" autocomplete="off">
+                    <button mat-button tabindex="-1" *ngIf="taxNo.value" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="taxNo.setValue(null)">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-error
+                        *ngIf="taxNo.errors?.minlength || taxNo.errors?.maxlength && taxNo.hasError('minlength')">
+                        Vergi No. <strong>10 Hane Olmalıdır!</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-12">
+                <mat-form-field style="min-width: 24rem;">
+                    <mat-label>Adres</mat-label>
+                    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="2"
+                        formControlName="address"></textarea>
+                    <button mat-button tabindex="-1" *ngIf="address.value" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="address.setValue(null)">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-error *ngIf="address.hasError('required') || address.touched">
+                        Adres <strong>Girilmelidir!</strong>
+                    </mat-error>
+                    <mat-error *ngIf="address.errors?.minlength">
+                        Adres <strong>3 Harfli Olmalıdır!</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-5">
+                        <mat-form-field style="width: 11rem;">
+                            <mat-label class="text-success">Tel No.</mat-label>
+                            <input matInput formControlName="phone" type="tel" max="11" min="11" autocomplete="off">
+                            <button mat-button tabindex="-1" *ngIf="phone.value" matSuffix mat-icon-button
+                                aria-label="Clear" (click)="phone.setValue(null)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngIf="phone.hasError('required') || phone.touched">
+                                Tel No. <strong>Girilmelidir!</strong>
+                            </mat-error>
+                            <mat-error *ngIf="phone.errors?.minlength || phone.errors?.maxlength">
+                                Tel No. <strong>11 Hane Olmalıdır!</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6">
+                        <mat-form-field style="width: 12rem;">
+                            <mat-label class="text-success">Mail Adresi</mat-label>
+                            <input matInput formControlName="eposta" type="email" autocomplete="off">
+                            <button mat-button tabindex="-1" *ngIf="eposta.value" matSuffix mat-icon-button
+                                aria-label="Clear" (click)="eposta.setValue(null)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngIf="eposta.hasError('required') || eposta.touched">
+                                Mail Adresi <strong>Girilmelidir!</strong>
+                            </mat-error>
+                            <mat-error *ngIf="eposta.errors?.email">
+                                E-Posta Adresi <strong>Geçersizdir!</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <mat-form-field style="width: 24rem;">
+                    <mat-label class="text-success">Web Sitesi</mat-label>
+                    <input matInput formControlName="webSite" type="text" type="url" autocomplete="off">
+                    <button mat-button tabindex="-1" *ngIf="webSite.value" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="webSite.setValue(null)">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer border-success">
+        <button type="button" class="btn btn-outline-dark btn-sm" aria-label="Close"
+            (click)="d('Cross click')">İptal</button>
+        <button type="button" class="btn btn-outline-success btn-sm" (click)="saveCompany()"
+            [disabled]="saveCompanyEnabled">Kaydet</button>
+    </div>
+</ng-template>
+
+<ng-template #userModal let-c="close" let-d="dismiss">
+    <div class="modal-header badge-pill badge-success">
+        <h4 class="modal-title mb-0 font-weight-bold ml-3" id="modal-basic-title">{{modalHeader}}</h4>
+        <button type="button" class="close mr-0" aria-label="Close" (click)="d('Cross click')" tabindex="-1">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" [formGroup]="userFormGroup" (keyup.enter)="userFormGroup.valid ? saveUser() : null">
+        <div class="row ml-auto mr-auto">
+            <h5 class="font-weight-bold text-success">Kullanıcı Bilgileri</h5>
+        </div>
+        <hr class="p-0 m-0 mb-1" />
+        <div class="row ml-auto mr-auto">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-6">
+                        <mat-form-field style="width: 12rem;">
+                            <mat-label class="text-success">Ad</mat-label>
+                            <input matInput formControlName="firstName" type="text" autocomplete="off">
+                            <button mat-button tabindex="-1" *ngIf="firstName.value" matSuffix mat-icon-button
+                                aria-label="Clear" (click)="firstName.setValue(null)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngIf="firstName.hasError('required')  || firstName.touched">
+                                Ad <strong>Girlmelidir!</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6">
+                        <mat-form-field style="width: 12rem;">
+                            <mat-label class="text-success">Soyad</mat-label>
+                            <input matInput formControlName="lastName" type="text" autocomplete="off">
+                            <button mat-button tabindex="-1" *ngIf="lastName.value" matSuffix mat-icon-button
+                                aria-label="Clear" (click)="lastName.setValue(null)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngIf="lastName.hasError('required')  || lastName.touched">
+                                Soyad <strong>Girlmelidir!</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-6">
+                        <mat-form-field style="width: 12rem;">
+                            <mat-label class="text-success">Birimi</mat-label>
+                            <input matInput formControlName="department" type="text" autocomplete="off">
+                            <button mat-button tabindex="-1" *ngIf="department.value" matSuffix mat-icon-button
+                                aria-label="Clear" (click)="department.setValue(null)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngIf="department.hasError('required')  || department.touched">
+                                Birimi <strong>Girlmelidir!</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6">
+                        <mat-form-field style="width: 12rem;">
+                            <mat-label class="text-success">Parola</mat-label>
+                            <span class="btn-show-pass">
+                                <i class="zmdi" [ngClass]="{
+                                    'zmdi-eye-off': !fieldTextType,
+                                    'zmdi-eye': fieldTextType
+                                  }" (click)="toggleFieldTextType()"></i>
+                            </span>
+                            <input matInput formControlName="password" [type]="fieldTextType ? 'text' : 'password'"
+                                autocomplete="off">
+                            <button mat-button tabindex="-1" *ngIf="password.value" matSuffix mat-icon-button
+                                aria-label="Clear" (click)="password.setValue(null)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngIf="password.hasError('required') || password.touched">
+                                Parola <strong>Girlmelidir!</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-6">
+                        <mat-form-field style="width: 12rem;">
+                            <mat-label class="text-success">Cep Telefon No.</mat-label>
+                            <input matInput formControlName="mobile" type="tel" autocomplete="off">
+                            <button mat-button tabindex="-1" *ngIf="mobile.value" matSuffix mat-icon-button
+                                aria-label="Clear" (click)="mobile.setValue(null)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6">
+                        <mat-form-field style="width: 12rem;">
+                            <mat-label class="text-success">Sabit Telefon No.</mat-label>
+                            <input matInput formControlName="telephoneNumber" type="tel" autocomplete="off">
+                            <button mat-button tabindex="-1" *ngIf="telephoneNumber.value" matSuffix mat-icon-button
+                                aria-label="Clear" (click)="telephoneNumber.setValue(null)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-6">
+                        <mat-form-field style="width: 12rem;">
+                            <mat-label class="text-success">Mail</mat-label>
+                            <input matInput formControlName="userPrincipalName" type="email" autocomplete="off">
+                            <button mat-button tabindex="-1" *ngIf="userPrincipalName.value" matSuffix mat-icon-button
+                                aria-label="Clear" (click)="userPrincipalName.setValue(null)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngIf="userPrincipalName.hasError('required') || userPrincipalName.touched">
+                                Mail <strong>Girlmelidir!</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6">
+                        <mat-form-field style="width: 12rem;">
+                            <mat-label class="text-success">Kullanıcı Adı</mat-label>
+                            <input matInput formControlName="displayName" type="text" autocomplete="off">
+                            <button mat-button tabindex="-1" *ngIf="displayName.value" matSuffix mat-icon-button
+                                aria-label="Clear" (click)="displayName.setValue(null)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngIf="displayName.hasError('required') || displayName.touched">
+                                Kullanıcı Adı <strong>Girlmelidir!</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="row align-items-end">
+                    <div class="col-6">
+                        <mat-form-field style="min-width: 12rem;">
+                            <mat-label>Cinsiyet</mat-label>
+                            <mat-select formControlName="genus">
+                                <mat-option [value]="0">Bay</mat-option>
+                                <mat-option [value]="1">Bayan</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="genus.hasError('required') || genus.touched">
+                                Cinsiyet <strong>Seçilmelidir!</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6 mt-1">
+                        <mat-form-field appearance="fill" style="width: 12rem;">
+                            <mat-label>Doğum Tarihi</mat-label>
+                            <input matInput [matDatepicker]="picker" formControlName="birtOfDate" type="text">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <mat-form-field style="width: 24.5rem;">
+                    <input type="text" placeholder="Firma" matInput formControlName="company"
+                        [matAutocomplete]="categoryList1" />
+                    <mat-autocomplete #categoryList1="matAutocomplete" [displayWith]="selectProperty('name')">
+                        <mat-option *ngFor="let item of filterCompanyListsUserModal | async" [value]="item">
+                            {{ item.name }}
+                        </mat-option>
+                        <mat-option *ngIf="(filterCompanyListsUserModal | async).length === 0">
+                            Önce Firma Eklenmeli!
+                        </mat-option>
+                    </mat-autocomplete>
+                    <button mat-button tabindex="-1" mat-icon-button matSuffix *ngIf="company.value"
+                        (click)="company.setValue(null)">
+                        <i class="zmdi zmdi-close"></i>
+                    </button>
+                    <mat-error *ngIf="company.hasError('required') || company.touched">
+                        Firma <strong>Seçilmelidir!</strong>
+                    </mat-error>
+                </mat-form-field>
+                <button class="btn" (click)="openCompanyModal(companyModal, 1)">
+                    <i class="zmdi zmdi-plus-circle-o text-dark zmdi-hc-lg"></i>
+                </button>
+            </div>
+            <div class="col-12">
+                <mat-form-field style="min-width: 26.7rem;">
+                    <mat-label>Kullanıcı Hakkıdda</mat-label>
+                    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="3"
+                        formControlName="about"></textarea>
+                </mat-form-field>
+            </div>
+        </div>
+        <hr class="p-0 m-0 mb-1" />
+        <div class="row ml-auto mr-auto">
+            <h5 class="font-weight-bold text-success">Kullanıcı Yetkileri</h5>
+        </div>
+        <div class="row ml-auto mr-auto">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <mat-checkbox formControlName="admin">Yetkili</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-checkbox formControlName="warehouseWorker">Depo Görevlisi</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-checkbox class=" ml-1" formControlName="user">Kullanıcı</mat-checkbox>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer border-success">
+        <button type="button" class="btn btn-outline-dark btn-sm" aria-label="Close"
+            (click)="d('Cross click')">İptal</button>
+        <button type="button" class="btn btn-outline-success btn-sm" (click)="saveUser()"
+            [disabled]="saveUserEnabled">Kaydet</button>
+    </div>
+</ng-template>

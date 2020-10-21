@@ -1,0 +1,62 @@
+ ::ng-deep .mat-form-field-underline, ::ng-deep .mat-form-field-ripple, ::ng-deep .mat-calendar-body-selected, ::ng-deep .mat-form-field-appearance-fill .mat-form-field-underline::before, ::ng-deep.mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar, ::ng-deep .mat-primary .mat-pseudo-checkbox-checked, .mat-primary .mat-pseudo-checkbox-indeterminate {
+     background-color: green !important;
+ }
+
+ ::ng-deep .mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-suffix .mat-icon-button .mat-datepicker-toggle-default-icon, ::ng-deep .mat-option.mat-active, ::ng-deep .mat-option, ::ng-deep .mat-form-field-appearance-fill .mat-form-field-label, ::ng-deep .mat-form-field-appearance-legacy .mat-form-field-label, ::ng-deep .mat-form-field.mat-focused .mat-form-field-label, ::ng-deep .mat-form-field.mat-form-field-invalid .mat-form-field-label, ::ng-deep .mat-form-field .mat-select.mat-select-invalid .mat-select-arrow, ::ng-deep .mat-form-field.mat-focused.mat-primary .mat-select-arrow, ::ng-deep .mat-primary .mat-option.mat-selected:not(.mat-option-disabled), ::ng-deep .mat-button, .mat-icon-button, .mat-stroked-button, ::ng-deep .mat-calendar-body-label {
+     color: green;
+ }
+
+ ::ng-deep .mat-autocomplete-panel .mat-option.mat-selected:not(.mat-active):not(:hover):not(.mat-option-disabled), ::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+     color: green !important;
+ }
+
+ ::ng-deep .mat-input-element {
+     caret-color: green !important;
+ }
+
+ ::ng-deep .mat-input-element:disabled {
+     color: rgba(0, 0, 0, 0.38) !important;
+ }
+
+ ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+     background-color: white;
+     padding: 0rem !important;
+ }
+
+ ::ng-deep .mat-form-field-appearance-fill .mat-form-field-infix {
+     padding: 0em 0 0em 0;
+ }
+
+ ::ng-deep .mat-form-field-hide-placeholder .mat-select-placeholder {
+     color: transparent;
+ }
+
+ ::ng-deep .mat-select-panel {
+     min-width: 100% !important;
+ }
+
+ ::ng-deep .cdk-overlay-container {
+     z-index: 2000 !important;
+ }
+
+ ::ng-deep .mat-checkbox .mat-checkbox-frame {
+     border-color: green;
+ }
+
+ ::ng-deep .mat-checkbox-checked .mat-checkbox-background {
+     background-color: green !important;
+ }
+
+ ::ng-deep .pagination .page-item .page-link {
+     border-radius: 1 !important;
+ }
+
+ ::ng-deep .pagination .page-link {
+     color: black;
+ }
+ ::ng-deep .page-item.active .page-link {
+    color: white !important;
+    background-color: green;
+    border-color:green;
+
+}
